@@ -1,4 +1,4 @@
-use crate::{utils::Result, config::Config, database::add_project, project::Project};
+use crate::{config::Config, database::add_project, project::Project, utils::Result};
 use clap::ArgMatches;
 use console::Term;
 use dialoguer::theme::ColorfulTheme;

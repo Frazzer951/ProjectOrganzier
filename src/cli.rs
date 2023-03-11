@@ -1,4 +1,4 @@
-use crate::{commands, utils::Result, config::Config};
+use crate::{commands, config::Config, utils::Result};
 use clap::{command, value_parser, Arg, ArgAction, Command};
 use std::path::PathBuf;
 

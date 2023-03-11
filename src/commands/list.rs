@@ -1,4 +1,4 @@
-use crate::{utils::Result, config::Config, database::load_projects};
+use crate::{config::Config, database::load_projects, utils::Result};
 use prettytable::{format, row, Table};
 
 pub fn list(config: &Config) -> Result<()> {
