@@ -17,17 +17,17 @@
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
-<h3 align="center">FPM</h3>
+<h3 align="center">Project Organizer</h3>
 
   <p align="center">
-    Frazzer's Project Manager is a CLI application for managing and creating projects. FPM allows the user to create project templates that are used to generate project files from. 
+    Project Organizer is a CLI application for managing and creating projects. It allows the user to create project templates that are used to generate project files from.
     <br />
-    <a href="https://github.com/frazzer951/fpm"><strong>Explore the docs »</strong></a>
+    <a href="https://github.com/frazzer951/ProjectOrganzier"><strong>Explore the docs »</strong></a>
     <br />
     <br />
-    <a href="https://github.com/frazzer951/fpm/issues">Report Bug</a>
+    <a href="https://github.com/frazzer951/ProjectOrganzier/issues">Report Bug</a>
     ·
-    <a href="https://github.com/frazzer951/fpm/issues">Request Feature</a>
+    <a href="https://github.com/frazzer951/ProjectOrganzier/issues">Request Feature</a>
   </p>
 </div>
 
@@ -53,7 +53,7 @@
 
 ## About The Project
 
-FPM is a tool to help speedup the process or creating and organizing projects. By default, only an empty folder with the
+ProjectOrganzier is a tool to help speedup the process or creating and organizing projects. By default, only an empty folder with the
 project name will be created, but you can specify different options to populate the project folder. One option is to
 clone and exiting git remote, or you can specify different templates to use.
 
@@ -85,14 +85,14 @@ To get a local copy up and running follow these simple example steps.
 
 1. Install the cargo crate directly from GitHub
    ```sh
-   cargo install --git https://github.com/Frazzer951/fpm.git
+   cargo install --git https://github.com/Frazzer951/ProjectOrganzier.git
    ```
    To install a specific release version use `--tag <VERSION TAG>`
 
 #### Option 2 - Manual Install
 
 1. Download the binary from the latest release for your platform from
-   the [release page](https://github.com/Frazzer951/fpm/releases)
+   the [release page](https://github.com/Frazzer951/ProjectOrganzier/releases)
 2. Place the binary into a folder seen by your OSes PATH variable, so it can be called from anywhere
 
 <p align="right">(<a href="#top">back to top</a>)</p>
@@ -104,16 +104,16 @@ To get a local copy up and running follow these simple example steps.
 Basic usage can be seen by looking at the help information for each command
 
 ```sh
-fpm -h
+ProjectOrganzier -h
 ```
 
 To add a simple project use
 
 ```shell
-fpm new -n MyProjectName
+ProjectOrganzier new -n MyProjectName
 ```
 
-_For more examples, please refer to the [Documentation](https://github.com/Frazzer951/fpm/wiki)_
+_For more examples, please refer to the [Documentation](https://github.com/Frazzer951/ProjectOrganzier/wiki)_
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
@@ -149,26 +149,26 @@ Distributed under the MIT License. See `LICENSE.txt` for more information.
 
 ## Contact
 
-Your Name - luke343279@gmail.com
+Luke Eltiste - luke343279@gmail.com
 
-Project Link: [https://github.com/frazzer951/fpm](https://github.com/frazzer951/fpm)
+Project Link: [https://github.com/frazzer951/ProjectOrganzier](https://github.com/frazzer951/fpm)
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
 
-[contributors-shield]: https://img.shields.io/github/contributors/frazzer951/fpm.svg?style=for-the-badge
-[contributors-url]: https://github.com/frazzer951/fpm/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/frazzer951/fpm.svg?style=for-the-badge
-[forks-url]: https://github.com/frazzer951/fpm/network/members
-[stars-shield]: https://img.shields.io/github/stars/frazzer951/fpm.svg?style=for-the-badge
-[stars-url]: https://github.com/frazzer951/fpm/stargazers
-[issues-shield]: https://img.shields.io/github/issues/frazzer951/fpm.svg?style=for-the-badge
-[issues-url]: https://github.com/frazzer951/fpm/issues
-[license-shield]: https://img.shields.io/github/license/frazzer951/fpm?style=for-the-badge
-[license-url]: https://github.com/Frazzer951/fpm/blob/main/LICENSE
+[contributors-shield]: https://img.shields.io/github/contributors/frazzer951/ProjectOrganzier.svg?style=for-the-badge
+[contributors-url]: https://github.com/frazzer951/ProjectOrganzier/graphs/contributors
+[forks-shield]: https://img.shields.io/github/forks/frazzer951/ProjectOrganzier.svg?style=for-the-badge
+[forks-url]: https://github.com/frazzer951/ProjectOrganzier/network/members
+[stars-shield]: https://img.shields.io/github/stars/frazzer951/ProjectOrganzier.svg?style=for-the-badge
+[stars-url]: https://github.com/frazzer951/ProjectOrganzier/stargazers
+[issues-shield]: https://img.shields.io/github/issues/frazzer951/ProjectOrganzier.svg?style=for-the-badge
+[issues-url]: https://github.com/frazzer951/ProjectOrganzier/issues
+[license-shield]: https://img.shields.io/github/license/frazzer951/ProjectOrganzier?style=for-the-badge
+[license-url]: https://github.com/Frazzer951/ProjectOrganzier/blob/main/LICENSE
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://linkedin.com/in/luke-eltiste
-[codecov-shield]: https://codecov.io/gh/Frazzer951/fpm/branch/main/graph/badge.svg?token=IFPJ06NXQ5
-[codecov-url]: https://codecov.io/gh/Frazzer951/fpm
+[codecov-shield]: https://codecov.io/gh/Frazzer951/ProjectOrganzier/branch/main/graph/badge.svg?token=IFPJ06NXQ5
+[codecov-url]: https://codecov.io/gh/Frazzer951/ProjectOrganzier
