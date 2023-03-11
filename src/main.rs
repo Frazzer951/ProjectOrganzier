@@ -1,12 +1,17 @@
 mod project;
 
+mod cli;
+mod commands;
 mod config;
 mod database;
 mod error;
 
 mod utils;
 
+use eyre::Result;
 
-fn main() {
-    println!("Hello, world!");
+fn main() -> Result<()> {
+    cli::parse()?;
+
+    Ok(())
 }

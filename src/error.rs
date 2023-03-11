@@ -21,4 +21,7 @@ pub enum Error {
 
     #[error("config missing needed value for `{0}`")]
     ConfigMissingValue(String),
+
+    #[error(transparent)]
+    Indicatif(#[from] indicatif::style::TemplateError),
 }
