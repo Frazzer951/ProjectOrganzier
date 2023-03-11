@@ -1,0 +1,29 @@
+version: 2
+
+updates:
+  - package-ecosystem: "cargo"
+    directory: "/"
+    target-branch: "main"
+    schedule:
+      interval: "daily"
+    allow:
+      - dependency-type: "direct"
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-patch"]
+    commit-message:
+      prefix: "chore:"
+    assignees:
+      - "frazzer951"
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    target-branch: "main"
+    schedule:
+      interval: "daily"
+    allow:
+      - dependency-type: "direct"
+    commit-message:
+      prefix: "chore:"
+    assignees:
+      - "frazzer951"
