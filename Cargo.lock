@@ -3,27 +3,6 @@
 version = 3
 
 [[package]]
-name = "ProjectOrganzier"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "clap",
- "console",
- "dialoguer",
- "diff",
- "dirs",
- "eyre",
- "fs-err",
- "indicatif",
- "prettytable-rs",
- "serde",
- "serde_json",
- "thiserror",
- "toml 0.7.2",
- "turbosql",
-]
-
-[[package]]
 name = "ahash"
 version = "0.7.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -513,6 +492,27 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5d727cae5b39d21da60fa540906919ad737832fe0b1c165da3a34d6548c849d6"
 dependencies = [
  "unicode-ident",
+]
+
+[[package]]
+name = "project_organzier"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "clap",
+ "console",
+ "dialoguer",
+ "diff",
+ "dirs",
+ "eyre",
+ "fs-err",
+ "indicatif",
+ "prettytable-rs",
+ "serde",
+ "serde_json",
+ "thiserror",
+ "toml 0.7.2",
+ "turbosql",
 ]
 
 [[package]]
