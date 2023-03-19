@@ -3,7 +3,6 @@ use crate::project::Project;
 use crate::utils::{config_folder, Result};
 use fs_err as fs;
 use serde::{Deserialize, Serialize};
-use std::io::Write;
 use std::path::PathBuf;
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -47,30 +46,30 @@ impl Config {
         }
     }
 
-    pub fn save(&self) -> Result<()> {
-        let cf = config_folder();
-        let mut config_path = cf.clone();
-        config_path.push("fpm.toml");
+    // pub fn save(&self) -> Result<()> {
+    //     let cf = config_folder();
+    //     let mut config_path = cf.clone();
+    //     config_path.push("fpm.toml");
 
-        fs::create_dir_all(cf)?;
+    //     fs::create_dir_all(cf)?;
 
-        let mut file = match fs::File::create(config_path) {
-            Ok(f) => f,
-            Err(e) => return Err(Error::IO(e)),
-        };
+    //     let mut file = match fs::File::create(config_path) {
+    //         Ok(f) => f,
+    //         Err(e) => return Err(Error::IO(e)),
+    //     };
 
-        let serialized = match toml::to_string(self) {
-            Ok(s) => s,
-            Err(e) => return Err(Error::TomlSer(e)),
-        };
+    //     let serialized = match toml::to_string(self) {
+    //         Ok(s) => s,
+    //         Err(e) => return Err(Error::TomlSer(e)),
+    //     };
 
-        match file.write(serialized.as_bytes()) {
-            Ok(_) => {},
-            Err(e) => return Err(Error::IO(e)),
-        };
+    //     match file.write(serialized.as_bytes()) {
+    //         Ok(_) => {},
+    //         Err(e) => return Err(Error::IO(e)),
+    //     };
 
-        Ok(())
-    }
+    //     Ok(())
+    // }
 
     pub fn gen_project_folder(&self, project: &Project) -> Result<PathBuf> {
         let mut path = PathBuf::new();
