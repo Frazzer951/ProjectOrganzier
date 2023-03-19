@@ -4,7 +4,7 @@
 
 ```bash
 git cliff --tag {{VERSION}} -o CHANGELOG.md
-git commit  -a -m 'chore(release): prepare for release'
+git commit -a -m 'chore(release): prepare for release'
 ```
 
 # 2. Cargo Release Action
