@@ -1,4 +1,4 @@
-use crate::{commands, config::Config, utils::Result};
+use crate::{commands, config::Config, error::Error, utils::Result};
 use clap::{command, value_parser, Arg, ArgAction, Command};
 use std::path::PathBuf;
 
@@ -89,7 +89,15 @@ fn subcommand_reset() -> Command {
 pub fn parse() -> Result<()> {
     let matches = cli().get_matches();
 
-    let config = Config::load()?;
+    let config = match Config::load() {
+        Err(Error::ConfigNotFound) => {
+            println!("Config not found. Creating a new one.");
+            let config = Config::new();
+            config.save()?;
+            Ok(config)
+        },
+        result => result,
+    }?;
 
     match matches.subcommand() {
         Some(("new", sub_matches)) => {
