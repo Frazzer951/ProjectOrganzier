@@ -43,6 +43,7 @@
     - [Option 1 - Easier Method](#option-1---easier-method)
     - [Option 2 - Manual Install](#option-2---manual-install)
 - [Usage](#usage)
+- [Roadmap](#roadmap)
 - [Contributing](#contributing)
 - [License](#license)
 - [Contact](#contact)
@@ -104,18 +105,31 @@ To get a local copy up and running follow these simple example steps.
 Basic usage can be seen by looking at the help information for each command
 
 ```sh
-ProjectOrganzier -h
+project_organzier -h
 ```
 
 To add a simple project use
 
 ```shell
-ProjectOrganzier new -n MyProjectName
+project_organzier new -n MyProjectName
 ```
 
 _For more examples, please refer to the [Documentation](https://github.com/Frazzer951/ProjectOrganzier/wiki)_
 
 <p align="right">(<a href="#top">back to top</a>)</p>
+
+<!-- ROADMAP -->
+
+## Roadmap
+
+- [ ] Commands
+  - [ ] Directory Discovery
+  - [ ] Add project from git
+- [ ] Redo Text input to allow pasting
+
+See the [open issues](https://github.com/github_username/repo_name/issues) for a full list of proposed features (and known issues).
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 <!-- CONTRIBUTING -->
 
