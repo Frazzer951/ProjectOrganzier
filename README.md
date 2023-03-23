@@ -125,6 +125,7 @@ _For more examples, please refer to the [Documentation](https://github.com/Frazz
 - [ ] Commands
   - [ ] Directory Discovery
   - [ ] Add project from git
+- [ ] Add Template Support
 - [ ] Redo Text input to allow pasting
 
 See the [open issues](https://github.com/github_username/repo_name/issues) for a full list of proposed features (and known issues).
