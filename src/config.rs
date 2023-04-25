@@ -56,33 +56,18 @@ impl Config {
         config_path.push(CONFIG_FILE);
 
         fs::create_dir_all(cf)?;
-
-        let mut file = match fs::File::create(config_path) {
-            Ok(f) => f,
-            Err(e) => return Err(Error::IO(e)),
-        };
-
-        let serialized = match toml::to_string(self) {
-            Ok(s) => s,
-            Err(e) => return Err(Error::TomlSer(e)),
-        };
-
-        match file.write(serialized.as_bytes()) {
-            Ok(_) => {},
-            Err(e) => return Err(Error::IO(e)),
-        };
+        let mut file = fs::File::create(config_path)?;
+        let serialized = toml::to_string(self)?;
+        file.write_all(serialized.as_bytes())?;
 
         Ok(())
     }
 
     pub fn gen_project_folder(&self, project: &Project) -> Result<PathBuf> {
-        let mut path = PathBuf::new();
-
-        if let Some(base_dir) = &self.base_dir {
-            path.push(base_dir);
-        } else {
-            return Err(Error::ConfigMissingValue("base_dir".to_owned()));
-        }
+        let mut path = match &self.base_dir {
+            Some(base_dir) => PathBuf::from(base_dir),
+            None => return Err(Error::ConfigMissingValue("base_dir".to_owned())),
+        };
 
         if let Some(cat) = &project.category {
             path.push(cat);
