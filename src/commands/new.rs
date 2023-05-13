@@ -20,8 +20,9 @@ struct NewParams {
     pub(crate) templates: Vec<String>,
 }
 
-pub fn new(sub_matches: &ArgMatches, config: &Config) -> Result<()> {
+pub fn new(sub_matches: &ArgMatches, config: &mut Config) -> Result<()> {
     let dir = sub_matches.get_one::<PathBuf>("directory").cloned();
+    let temp_dir = sub_matches.get_one::<PathBuf>("template-directory").cloned();
     let mut name = sub_matches.get_one::<String>("name").cloned();
     let mut desc = sub_matches.get_one::<String>("desc").cloned();
     let mut language = sub_matches.get_one::<String>("language").cloned();
@@ -65,6 +66,10 @@ pub fn new(sub_matches: &ArgMatches, config: &Config) -> Result<()> {
     }
 
     let mut project = Project::new(name, desc, tags, language, category);
+
+    if temp_dir.is_some() {
+        config.template_dir = temp_dir;
+    }
 
     let pb = create_spinner("Creating Folder...")?;
 

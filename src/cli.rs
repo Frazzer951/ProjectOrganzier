@@ -24,6 +24,10 @@ fn subcommand_new() -> Command {
             .long("directory")
             .help("The directory to place the project in. If nothing is provided a directory will be generated")
             .value_parser(value_parser!(PathBuf)),
+        Arg::new("template-directory")
+            .long("template-directory")
+            .help("The directory to find the specified templates, if not provided the default template directory will be used")
+            .value_parser(value_parser!(PathBuf)),
         Arg::new("tags")
             .long("tag")
             .num_args(1..)
@@ -125,7 +129,7 @@ pub fn parse() -> Result<()> {
 
     match matches.subcommand() {
         Some(("new", sub_matches)) => {
-            commands::new::new(sub_matches, &config)?;
+            commands::new::new(sub_matches, &mut config)?;
         },
         Some(("add", sub_matches)) => {
             commands::add::add(sub_matches, &config)?;
