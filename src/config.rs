@@ -13,7 +13,7 @@ pub const DATABASE_FILE: &str = "projectDB.db";
 pub struct Config {
     pub database_path: String,
     pub base_dir: Option<String>,
-    pub template_dir: Option<PathBuf>,
+    pub template_dir: Option<String>,
 }
 
 impl Default for Config {

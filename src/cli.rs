@@ -109,6 +109,8 @@ fn subcommand_config() -> Command {
                 "db",
                 "db-path",
                 "database-path",
+                "template-dir",
+                "template",
             ]),
             Arg::new("value").required(true).help("The value to set"),
         ])])

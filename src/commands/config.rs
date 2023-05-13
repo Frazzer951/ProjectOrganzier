@@ -14,6 +14,9 @@ pub fn config(sub_matches: &ArgMatches, config: &mut Config) -> Result<()> {
                 key if key == "db" || key == "db-path" || key == "database-path" => {
                     config.database_path = value;
                 },
+                key if key == "template-dir" || key == "template" => {
+                    config.template_dir = Some(value);
+                },
                 _ => {
                     return Err(Error::ConfigInvalidKey(key));
                 },
