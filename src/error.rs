@@ -18,6 +18,9 @@ pub enum Error {
     #[error("config missing needed value for `{0}`")]
     ConfigMissingValue(String),
 
+    #[error("key `{0}` is invalid for the config")]
+    ConfigInvalidKey(String),
+
     #[error(transparent)]
     Indicatif(#[from] indicatif::style::TemplateError),
 }

@@ -11,6 +11,7 @@ fn cli() -> Command {
             subcommand_add(),
             subcommand_list(),
             subcommand_reset(),
+            subcommand_config(),
         ])
 }
 
@@ -86,10 +87,27 @@ fn subcommand_reset() -> Command {
             .action(ArgAction::SetTrue)])
 }
 
+fn subcommand_config() -> Command {
+    Command::new("config")
+        .about("Manage the Config")
+        .subcommand_required(true)
+        .arg_required_else_help(true)
+        .subcommands(vec![Command::new("set").about("Set a value in the config").args(&[
+            Arg::new("key").required(true).help("The key to set").value_parser([
+                "base",
+                "base-dir",
+                "db",
+                "db-path",
+                "database-path",
+            ]),
+            Arg::new("value").required(true).help("The value to set"),
+        ])])
+}
+
 pub fn parse() -> Result<()> {
     let matches = cli().get_matches();
 
-    let config = match Config::load() {
+    let mut config = match Config::load() {
         Err(Error::ConfigNotFound) => {
             println!("Config not found. Creating a new one.");
             let config = Config::new();
@@ -112,8 +130,11 @@ pub fn parse() -> Result<()> {
         Some(("reset", sub_matches)) => {
             commands::reset::reset(sub_matches, &config)?;
         },
+        Some(("config", sub_matches)) => {
+            commands::config::config(sub_matches, &mut config)?;
+        },
         Some((command, _)) => {
-            println!("Code has not yet been written from `{command}`");
+            println!("Code has not yet been written for `{command}`");
         },
         _ => unreachable!(),
     }
