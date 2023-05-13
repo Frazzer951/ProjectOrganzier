@@ -17,6 +17,7 @@ struct NewParams {
     pub(crate) tags: Vec<String>,
     pub(crate) language: Option<String>,
     pub(crate) category: Option<String>,
+    pub(crate) templates: Vec<String>,
 }
 
 pub fn new(sub_matches: &ArgMatches, config: &Config) -> Result<()> {
@@ -31,15 +32,23 @@ pub fn new(sub_matches: &ArgMatches, config: &Config) -> Result<()> {
         .flatten()
         .cloned()
         .collect::<Vec<_>>();
+    let mut templates = sub_matches
+        .get_many::<String>("templates")
+        .into_iter()
+        .flatten()
+        .cloned()
+        .collect::<Vec<_>>();
     let interactive = sub_matches.get_flag("interactive");
+
     if interactive {
-        let new_params = new_params_interactive(name, desc, tags, language, category)?;
+        let new_params = new_params_interactive(name, desc, tags, language, category, templates)?;
 
         name = new_params.name;
         desc = new_params.desc;
         tags = new_params.tags;
         language = new_params.language;
         category = new_params.category;
+        templates = new_params.templates;
 
         println!("\n\n");
         println!("Name: {name:?}");
@@ -47,14 +56,19 @@ pub fn new(sub_matches: &ArgMatches, config: &Config) -> Result<()> {
         println!("Tags: {tags:?}");
         println!("Language: {language:?}");
         println!("Category: {category:?}");
+        println!("Templates: {templates:?}");
     }
+
     if name.is_none() {
         println!("A name is required for a project, please specify one");
         return Ok(());
     }
+
     let mut project = Project::new(name, desc, tags, language, category);
+
     let pb = create_spinner("Creating Folder...")?;
-    match project.build(dir, config) {
+
+    match project.build(dir, config, templates) {
         Ok(_) => {},
         Err(e) => match e {
             Error::ConfigMissingValue(e) => {
@@ -67,6 +81,7 @@ pub fn new(sub_matches: &ArgMatches, config: &Config) -> Result<()> {
         },
     };
     pb.finish_with_message("Folder Created");
+
     add_project(config, &project)?;
     println!("{project:#?}");
     Ok(())
@@ -78,6 +93,7 @@ fn new_params_interactive(
     mut tags: Vec<String>,
     language: Option<String>,
     category: Option<String>,
+    mut templates: Vec<String>,
 ) -> Result<NewParams> {
     // Get Name
     let name = Some(
@@ -150,11 +166,28 @@ fn new_params_interactive(
         }
     };
 
+    // Get Templates
+    let term = Term::stdout();
+    loop {
+        term.write_line(&format!("Current templates are: {templates:?}"))?;
+        let template: String = Input::with_theme(&ColorfulTheme::default())
+            .with_prompt("Templates (leave empty to continue)")
+            .allow_empty(true)
+            .interact_text_on(&term)?;
+        if template.is_empty() {
+            break;
+        }
+        templates.push(template);
+        templates.sort();
+        term.clear_last_lines(2)?;
+    }
+
     Ok(NewParams {
         name,
         desc,
         tags,
         language,
         category,
+        templates,
     })
 }

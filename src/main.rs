@@ -5,6 +5,7 @@ mod commands;
 mod config;
 mod database;
 mod error;
+mod template;
 
 mod utils;
 

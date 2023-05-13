@@ -1,4 +1,4 @@
-use crate::config::Config;
+use crate::{config::Config, template::Template};
 use fs_err as fs;
 use std::path::PathBuf;
 use turbosql::Turbosql;
@@ -33,7 +33,7 @@ impl Project {
         }
     }
 
-    pub fn build(&mut self, dir: Option<PathBuf>, config: &Config) -> crate::utils::Result<()> {
+    pub fn build(&mut self, dir: Option<PathBuf>, config: &Config, templates: Vec<String>) -> crate::utils::Result<()> {
         let dir = if let Some(dir) = dir {
             self.directory = Some(dir.clone());
             dir
@@ -41,6 +41,12 @@ impl Project {
             let dir = config.gen_project_folder(self)?;
             self.directory = Some(dir.clone());
             dir
+        };
+
+        let templates = if !templates.is_empty() {
+            Template::load_templates(&config)?
+        } else {
+            vec![]
         };
 
         fs::create_dir_all(dir)?;

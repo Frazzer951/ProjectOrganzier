@@ -37,6 +37,12 @@ fn subcommand_new() -> Command {
             .short('c')
             .long("category")
             .help("Used to keep similar project types together. I.E. `work`, `thirdparty`, etc"),
+        Arg::new("templates")
+            .short('t')
+            .long("template")
+            .num_args(1..)
+            .action(ArgAction::Append)
+            .help("Templates to use when creating the project"),
         Arg::new("interactive")
             .short('i')
             .long("interactive")
