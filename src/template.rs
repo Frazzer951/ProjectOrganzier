@@ -1,9 +1,11 @@
 use crate::{config::Config, error::Error, utils::Result};
+use dialoguer::theme::ColorfulTheme;
+use dialoguer::Input;
 use fs_err as fs;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
-use std::hash::Hash;
 use std::path::PathBuf;
+use std::todo;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Template {
@@ -13,6 +15,7 @@ pub struct Template {
     pub template_file: Option<PathBuf>,
     pub template_vars: Option<Vec<String>>,
     pub sub_templates: Option<Vec<String>>,
+    pub commands: Option<Vec<String>>,
 }
 
 impl Template {
@@ -42,10 +45,42 @@ impl Template {
     pub fn build_templates(path: PathBuf, templates: Vec<String>, template_files: &HashMap<String, Template>) -> Result<()> {
         let mut variables: HashMap<String, String> = HashMap::new();
 
+        for template in templates {
+            let template = match template_files.get(&template) {
+                Some(template) => template,
+                None => return Err(Error::TemplateNotFound(template)),
+            };
+
+            template.build(path.clone(), &mut variables)?;
+        }
+
         Ok(())
     }
 
-    pub fn build(self, path: PathBuf, variables: &mut HashMap<String, String>) -> Result<()> {
+    pub fn build(&self, path: PathBuf, variables: &mut HashMap<String, String>) -> Result<()> {
+        if let Some(vars) = &self.template_vars {
+            for var in vars {
+                if !variables.contains_key(var) {
+                    let var_value = Some(
+                        Input::with_theme(&ColorfulTheme::default())
+                            .with_prompt(format!("Enter the value for {var}"))
+                            .interact_text()?,
+                    );
+                    variables.insert(var.to_string(), var_value.unwrap_or_default());
+                }
+            }
+        }
+
+        if let Some(template_dir) = &self.template_dir {
+            todo!("build template dir")
+            //Template::build_template_dir(path.clone(), template_dir, &mut variables)?;
+        }
+
+        if let Some(template_file) = &self.template_file {
+            todo!("build template file")
+            //Template::build_template_file(path.clone(), template_file, &mut variables)?;
+        }
+
         Ok(())
     }
 }
