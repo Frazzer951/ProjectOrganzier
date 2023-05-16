@@ -9,13 +9,13 @@ pub fn config(sub_matches: &ArgMatches, config: &mut Config) -> Result<()> {
 
             match key {
                 key if key == "base" || key == "base-dir" => {
-                    config.base_dir = Some(value);
+                    config.base_dir = Some(value.into());
                 },
                 key if key == "db" || key == "db-path" || key == "database-path" => {
                     config.database_path = value;
                 },
                 key if key == "template-dir" || key == "template" => {
-                    config.template_dir = Some(value);
+                    config.template_dir = Some(value.into());
                 },
                 _ => {
                     return Err(Error::ConfigInvalidKey(key));

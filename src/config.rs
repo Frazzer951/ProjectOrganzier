@@ -12,8 +12,8 @@ pub const DATABASE_FILE: &str = "projectDB.db";
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Config {
     pub database_path: String,
-    pub base_dir: Option<String>,
-    pub template_dir: Option<String>,
+    pub base_dir: Option<PathBuf>,
+    pub template_dir: Option<PathBuf>,
 }
 
 impl Default for Config {

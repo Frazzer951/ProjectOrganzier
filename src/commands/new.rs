@@ -68,7 +68,7 @@ pub fn new(sub_matches: &ArgMatches, config: &mut Config) -> Result<()> {
     let mut project = Project::new(name, desc, tags, language, category);
 
     if let Some(temp_dir) = temp_dir {
-        config.template_dir = Some(temp_dir.to_str().unwrap_or_default().to_owned());
+        config.template_dir = Some(temp_dir);
     }
 
     let pb = create_spinner("Creating Folder...")?;
