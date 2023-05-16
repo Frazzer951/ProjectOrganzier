@@ -23,4 +23,7 @@ pub enum Error {
 
     #[error(transparent)]
     Indicatif(#[from] indicatif::style::TemplateError),
+
+    #[error(transparent)]
+    SerdeYaml(#[from] serde_yaml::Error),
 }

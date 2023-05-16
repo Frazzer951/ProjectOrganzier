@@ -1,6 +1,6 @@
 use crate::{config::Config, template::Template};
 use fs_err as fs;
-use std::path::PathBuf;
+use std::{collections::HashMap, path::PathBuf};
 use turbosql::Turbosql;
 
 #[derive(Turbosql, Default, Debug, PartialEq, Eq, Clone)]
@@ -43,13 +43,15 @@ impl Project {
             dir
         };
 
-        let templates = if !templates.is_empty() {
-            Template::load_templates(&config)?
+        let template_files = if templates.is_empty() {
+            HashMap::new()
         } else {
-            vec![]
+            Template::load_templates(&config)?
         };
 
-        fs::create_dir_all(dir)?;
+        fs::create_dir_all(&dir)?;
+
+        Template::build_templates(dir, templates, &template_files)?;
 
         Ok(())
     }
