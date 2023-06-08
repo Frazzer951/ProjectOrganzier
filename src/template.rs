@@ -205,4 +205,22 @@ mod tests {
         let expected_file = fs::read_to_string(expected_file).unwrap();
         assert_eq!(file, expected_file);
     }
+
+    #[test]
+    fn test_load_files() {
+        let mut variables = HashMap::new();
+        variables.insert("number".to_owned(), "1".to_owned());
+        variables.insert("number2".to_owned(), "2".to_owned());
+        let files = load_files(Path::new("tests/templates/template_dir"), &variables).unwrap();
+
+        let expected_file_1 = Path::new("tests/templates/template_dir_expected/file.txt");
+        let expected_file_1 = fs::read_to_string(expected_file_1).unwrap();
+        let expected_file_2 = Path::new("tests/templates/template_dir_expected/file_2.txt");
+        let expected_file_2 = fs::read_to_string(expected_file_2).unwrap();
+
+        assert_eq!(*files.get(Path::new("file.txt")).unwrap(), expected_file_1);
+        assert_eq!(*files.get(Path::new("file_2.txt")).unwrap(), expected_file_2);
+    }
+
+    //TODO: Test building of template
 }
