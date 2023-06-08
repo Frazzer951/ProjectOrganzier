@@ -24,6 +24,10 @@ fn subcommand_new() -> Command {
             .long("directory")
             .help("The directory to place the project in. If nothing is provided a directory will be generated")
             .value_parser(value_parser!(PathBuf)),
+        Arg::new("template-directory")
+            .long("template-directory")
+            .help("The directory to find the specified templates, if not provided the default template directory will be used")
+            .value_parser(value_parser!(PathBuf)),
         Arg::new("tags")
             .long("tag")
             .num_args(1..)
@@ -37,6 +41,12 @@ fn subcommand_new() -> Command {
             .short('c')
             .long("category")
             .help("Used to keep similar project types together. I.E. `work`, `thirdparty`, etc"),
+        Arg::new("templates")
+            .short('t')
+            .long("template")
+            .num_args(1..)
+            .action(ArgAction::Append)
+            .help("Templates to use when creating the project"),
         Arg::new("interactive")
             .short('i')
             .long("interactive")
@@ -99,6 +109,8 @@ fn subcommand_config() -> Command {
                 "db",
                 "db-path",
                 "database-path",
+                "template-dir",
+                "template",
             ]),
             Arg::new("value").required(true).help("The value to set"),
         ])])
@@ -119,7 +131,7 @@ pub fn parse() -> Result<()> {
 
     match matches.subcommand() {
         Some(("new", sub_matches)) => {
-            commands::new::new(sub_matches, &config)?;
+            commands::new::new(sub_matches, &mut config)?;
         },
         Some(("add", sub_matches)) => {
             commands::add::add(sub_matches, &config)?;

@@ -12,6 +12,9 @@ pub enum Error {
     #[error(transparent)]
     TomlSer(#[from] toml::ser::Error),
 
+    #[error(transparent)]
+    SerdeYaml(#[from] serde_yaml::Error),
+
     #[error("Config file not found")]
     ConfigNotFound,
 
@@ -20,6 +23,12 @@ pub enum Error {
 
     #[error("key `{0}` is invalid for the config")]
     ConfigInvalidKey(String),
+
+    #[error("The template `{0}` was not found in the template directory")]
+    TemplateNotFound(String),
+
+    #[error("{0}")]
+    CommandFailed(String),
 
     #[error(transparent)]
     Indicatif(#[from] indicatif::style::TemplateError),

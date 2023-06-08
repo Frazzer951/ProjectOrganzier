@@ -1,0 +1,6 @@
+this is some text 
+
+number: ${number}
+number2: ${number2}
+
+more text

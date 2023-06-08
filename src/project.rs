@@ -1,6 +1,6 @@
-use crate::config::Config;
+use crate::{config::Config, template::Template};
 use fs_err as fs;
-use std::path::PathBuf;
+use std::{collections::HashMap, path::PathBuf};
 use turbosql::Turbosql;
 
 #[derive(Turbosql, Default, Debug, PartialEq, Eq, Clone)]
@@ -33,7 +33,7 @@ impl Project {
         }
     }
 
-    pub fn build(&mut self, dir: Option<PathBuf>, config: &Config) -> crate::utils::Result<()> {
+    pub fn build(&mut self, dir: Option<PathBuf>, config: &Config, templates: Vec<String>) -> crate::utils::Result<()> {
         let dir = if let Some(dir) = dir {
             self.directory = Some(dir.clone());
             dir
@@ -43,7 +43,15 @@ impl Project {
             dir
         };
 
-        fs::create_dir_all(dir)?;
+        let template_files = if templates.is_empty() {
+            HashMap::new()
+        } else {
+            Template::load_templates(config)?
+        };
+
+        fs::create_dir_all(&dir)?;
+
+        Template::build_templates(dir, templates, &template_files, config)?;
 
         Ok(())
     }

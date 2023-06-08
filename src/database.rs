@@ -58,6 +58,7 @@ mod tests {
         let config = Config {
             database_path: "./tests/test_files/database.db".to_owned(),
             base_dir: None,
+            template_dir: None,
         };
 
         let _ = std::fs::remove_file(&config.database_path);

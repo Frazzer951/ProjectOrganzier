@@ -43,7 +43,6 @@
     - [Option 1 - Easier Method](#option-1---easier-method)
     - [Option 2 - Manual Install](#option-2---manual-install)
 - [Usage](#usage)
-- [Roadmap](#roadmap)
 - [Contributing](#contributing)
 - [License](#license)
 - [Contact](#contact)
@@ -117,20 +116,6 @@ project_organzier new -n MyProjectName
 _For more examples, please refer to the [Documentation](https://github.com/Frazzer951/ProjectOrganzier/wiki)_
 
 <p align="right">(<a href="#top">back to top</a>)</p>
-
-<!-- ROADMAP -->
-
-## Roadmap
-
-- [ ] Commands
-  - [ ] Directory Discovery
-  - [ ] Add project from git
-- [ ] Add Template Support
-- [ ] Redo Text input to allow pasting
-
-See the [open issues](https://github.com/github_username/repo_name/issues) for a full list of proposed features (and known issues).
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 <!-- CONTRIBUTING -->
 
