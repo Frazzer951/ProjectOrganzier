@@ -46,7 +46,7 @@ impl Project {
         let template_files = if templates.is_empty() {
             HashMap::new()
         } else {
-            Template::load_templates(&config)?
+            Template::load_templates(config)?
         };
 
         fs::create_dir_all(&dir)?;
