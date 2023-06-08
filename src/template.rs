@@ -4,8 +4,8 @@ use dialoguer::Input;
 use fs_err as fs;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
-use std::path::PathBuf;
-use std::todo;
+use std::path::{Path, PathBuf};
+use std::process::Command;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Template {
@@ -14,7 +14,6 @@ pub struct Template {
     pub template_dir: Option<PathBuf>,
     pub template_file: Option<PathBuf>,
     pub template_vars: Option<Vec<String>>,
-    pub sub_templates: Option<Vec<String>>,
     pub commands: Option<Vec<String>>,
 }
 
@@ -45,10 +44,10 @@ impl Template {
     pub fn build_templates(path: PathBuf, templates: Vec<String>, template_files: &HashMap<String, Template>) -> Result<()> {
         let mut variables: HashMap<String, String> = HashMap::new();
 
-        for template in templates {
-            let template = match template_files.get(&template) {
+        for template_str in templates {
+            let template = match template_files.get(&template_str) {
                 Some(template) => template,
-                None => return Err(Error::TemplateNotFound(template)),
+                None => return Err(Error::TemplateNotFound(template_str)),
             };
 
             template.build(path.clone(), &mut variables)?;
@@ -72,15 +71,84 @@ impl Template {
         }
 
         if let Some(template_dir) = &self.template_dir {
-            todo!("build template dir")
-            //Template::build_template_dir(path.clone(), template_dir, &mut variables)?;
+            // Walk the template dir and load all files and their contents
+            let files = load_files(template_dir, variables)?;
+
+            // Write the file to the project dir
+            for (file, contents) in files {
+                let file = path.join(file);
+                fs::create_dir_all(file.parent().unwrap())?;
+                fs::write(file, contents)?;
+            }
         }
 
         if let Some(template_file) = &self.template_file {
-            todo!("build template file")
-            //Template::build_template_file(path.clone(), template_file, &mut variables)?;
+            let file_contents = load_file(template_file, variables)?;
+            let file = path.join(template_file);
+            fs::create_dir_all(file.parent().unwrap())?;
+            fs::write(file, file_contents)?;
+        }
+
+        if let Some(commands) = &self.commands {
+            for command in commands {
+                run_command(command, &path)?;
+            }
         }
 
         Ok(())
     }
+}
+
+fn load_files(dir: &Path, variables: &HashMap<String, String>) -> Result<HashMap<PathBuf, String>> {
+    let mut files = HashMap::new();
+
+    for entry in fs::read_dir(dir)? {
+        let path = entry?.path();
+        if path.is_dir() {
+            let sub_files = load_files(&path, variables)?;
+            files.extend(sub_files);
+        } else if path.is_file() {
+            let contents = fs::read_to_string(&path)?;
+            let contents = replace_variables(&contents, variables)?;
+            files.insert(path, contents);
+        }
+    }
+
+    // Remove directory prefix from keys
+    let files = files
+        .into_iter()
+        .map(|(key, value)| (key.strip_prefix(dir).unwrap_or(&key).to_path_buf(), value))
+        .collect();
+
+    Ok(files)
+}
+
+fn load_file(path: &Path, variables: &HashMap<String, String>) -> Result<String> {
+    let contents = fs::read_to_string(path)?;
+    let contents = replace_variables(&contents, variables)?;
+    Ok(contents)
+}
+
+fn replace_variables(contents: &str, variables: &HashMap<String, String>) -> Result<String> {
+    let mut contents = contents.to_string();
+
+    for (key, value) in variables {
+        contents = contents.replace(&format!("{{{}}}", key), value);
+    }
+
+    Ok(contents)
+}
+
+fn run_command(command: &str, dir: &Path) -> Result<()> {
+    let output = Command::new("sh").arg("-c").arg(command).current_dir(dir).output()?;
+
+    if !output.status.success() {
+        let stderr: std::borrow::Cow<'_, str> = String::from_utf8_lossy(&output.stderr);
+        return Err(Error::CommandFailed(format!(
+            "Command '{}' failed with error: {}",
+            command, stderr
+        )));
+    }
+
+    Ok(())
 }

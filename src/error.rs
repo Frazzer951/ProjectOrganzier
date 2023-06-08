@@ -27,6 +27,9 @@ pub enum Error {
     #[error("The template `{0}` was not found in the template directory")]
     TemplateNotFound(String),
 
+    #[error("{0}")]
+    CommandFailed(String),
+
     #[error(transparent)]
     Indicatif(#[from] indicatif::style::TemplateError),
 }
