@@ -1,9 +1,9 @@
 name: test
 desc: A Test Tempalte
 template_dir: template_dir
-template_file: template_dir/file.txt
+template_file: file_3.txt
 template_vars:
   - number
   - number2
 commands:
-  - mkdir -p test
+  - git init

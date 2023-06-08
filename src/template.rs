@@ -41,7 +41,12 @@ impl Template {
         Ok(templates)
     }
 
-    pub fn build_templates(path: PathBuf, templates: Vec<String>, template_files: &HashMap<String, Template>) -> Result<()> {
+    pub fn build_templates(
+        path: PathBuf,
+        templates: Vec<String>,
+        template_files: &HashMap<String, Template>,
+        config: &Config,
+    ) -> Result<()> {
         let mut variables: HashMap<String, String> = HashMap::new();
 
         for template_str in templates {
@@ -50,13 +55,13 @@ impl Template {
                 None => return Err(Error::TemplateNotFound(template_str)),
             };
 
-            template.build(path.clone(), &mut variables)?;
+            template.build(path.clone(), &mut variables, config)?;
         }
 
         Ok(())
     }
 
-    pub fn build(&self, path: PathBuf, variables: &mut HashMap<String, String>) -> Result<()> {
+    pub fn build(&self, path: PathBuf, variables: &mut HashMap<String, String>, config: &Config) -> Result<()> {
         if let Some(vars) = &self.template_vars {
             for var in vars {
                 if !variables.contains_key(var) {
@@ -71,8 +76,9 @@ impl Template {
         }
 
         if let Some(template_dir) = &self.template_dir {
+            let template_dir = config.template_dir.as_ref().unwrap().join(template_dir);
             // Walk the template dir and load all files and their contents
-            let files = load_files(template_dir, variables)?;
+            let files = load_files(&template_dir, variables)?;
 
             // Write the file to the project dir
             for (file, contents) in files {
@@ -83,8 +89,9 @@ impl Template {
         }
 
         if let Some(template_file) = &self.template_file {
-            let file_contents = load_file(template_file, variables)?;
-            let file = path.join(template_file);
+            let template_file = config.template_dir.as_ref().unwrap().join(template_file);
+            let file_contents = load_file(&template_file, variables)?;
+            let file = path.join(template_file.file_name().unwrap());
             fs::create_dir_all(file.parent().unwrap())?;
             fs::write(file, file_contents)?;
         }
@@ -117,7 +124,7 @@ fn load_files(dir: &Path, variables: &HashMap<String, String>) -> Result<HashMap
     // Remove directory prefix from keys
     let files = files
         .into_iter()
-        .map(|(key, value)| (key.strip_prefix(dir).unwrap_or(&key).to_path_buf(), value))
+        .map(|(key, value)| (key.strip_prefix(dir.parent().unwrap()).unwrap_or(&key).to_path_buf(), value))
         .collect();
 
     Ok(files)
@@ -140,7 +147,26 @@ fn replace_variables(contents: &str, variables: &HashMap<String, String>) -> Res
 }
 
 fn run_command(command: &str, dir: &Path) -> Result<()> {
-    let output = Command::new("sh").arg("-c").arg(command).current_dir(dir).output()?;
+    // split the command from the arguments
+    let mut split_command = command.split_whitespace();
+    let prog = split_command.next().unwrap();
+    let args = split_command.collect::<Vec<&str>>();
+
+    let mut cmd = Command::new(prog);
+    cmd.current_dir(dir);
+
+    for arg in args {
+        cmd.arg(arg);
+    }
+    let output = match cmd.output() {
+        Ok(output) => output,
+        Err(e) => {
+            return Err(Error::CommandFailed(format!(
+                "Command '{}' failed with error: {}",
+                command, e
+            )))
+        },
+    };
 
     if !output.status.success() {
         let stderr: std::borrow::Cow<'_, str> = String::from_utf8_lossy(&output.stderr);
@@ -157,6 +183,7 @@ fn run_command(command: &str, dir: &Path) -> Result<()> {
 mod tests {
     use super::*;
     use crate::config::Config;
+    use anyhow::Result;
 
     #[test]
     fn test_load_templates() {
@@ -169,9 +196,9 @@ mod tests {
             name: "test".to_owned(),
             desc: Some("A Test Tempalte".to_owned()),
             template_dir: Some(PathBuf::from("template_dir")),
-            template_file: Some(PathBuf::from("template_dir/file.txt")),
+            template_file: Some(PathBuf::from("file_3.txt")),
             template_vars: Some(vec!["number".to_owned(), "number2".to_owned()]),
-            commands: Some(vec!["mkdir -p test".to_owned()]),
+            commands: Some(vec!["git init".to_owned()]),
         };
 
         let tempaltes = Template::load_templates(&config).unwrap();
@@ -185,13 +212,11 @@ mod tests {
         let mut variables = HashMap::new();
         variables.insert("number".to_owned(), "1".to_owned());
         variables.insert("number2".to_owned(), "2".to_owned());
-        let file = load_file(Path::new("tests/templates/template_dir/file.txt"), &variables).unwrap();
+        let file = load_file(Path::new("tests/templates/template_dir/file_1.txt"), &variables).unwrap();
 
-        let expected_file = Path::new("tests/templates/template_dir_expected/file.txt");
+        let expected_file = Path::new("tests/templates/template_dir_expected/file_1.txt");
         let expected_file = fs::read_to_string(expected_file).unwrap();
         assert_eq!(file, expected_file);
-
-        fs::write(Path::new("tests/templates/template_dir_expected/file.txt"), file).unwrap();
     }
 
     #[test]
@@ -213,14 +238,36 @@ mod tests {
         variables.insert("number2".to_owned(), "2".to_owned());
         let files = load_files(Path::new("tests/templates/template_dir"), &variables).unwrap();
 
-        let expected_file_1 = Path::new("tests/templates/template_dir_expected/file.txt");
+        let expected_file_1 = Path::new("tests/templates/template_dir_expected/file_1.txt");
         let expected_file_1 = fs::read_to_string(expected_file_1).unwrap();
         let expected_file_2 = Path::new("tests/templates/template_dir_expected/file_2.txt");
         let expected_file_2 = fs::read_to_string(expected_file_2).unwrap();
 
-        assert_eq!(*files.get(Path::new("file.txt")).unwrap(), expected_file_1);
-        assert_eq!(*files.get(Path::new("file_2.txt")).unwrap(), expected_file_2);
+        assert_eq!(*files.get(Path::new("template_dir/file_1.txt")).unwrap(), expected_file_1);
+        assert_eq!(*files.get(Path::new("template_dir/file_2.txt")).unwrap(), expected_file_2);
     }
 
-    //TODO: Test building of template
+    #[test]
+    fn test_build_tempate() -> Result<()> {
+        let config = Config {
+            template_dir: Some(PathBuf::from("tests/templates")),
+
+            ..Default::default()
+        };
+        let mut variables = HashMap::new();
+        variables.insert("number".to_owned(), "1".to_owned());
+        variables.insert("number2".to_owned(), "2".to_owned());
+        let tempaltes = Template::load_templates(&config).unwrap();
+        let template = tempaltes.get("test").unwrap();
+
+        // Delete test directory if it exists
+        let test_dir = Path::new("tests/test_files/template_test");
+        if test_dir.exists() {
+            fs::remove_dir_all(test_dir).unwrap();
+        }
+
+        template.build(test_dir.to_path_buf(), &mut variables, &config)?;
+
+        Ok(())
+    }
 }

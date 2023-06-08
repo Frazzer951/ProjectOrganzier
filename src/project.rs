@@ -51,7 +51,7 @@ impl Project {
 
         fs::create_dir_all(&dir)?;
 
-        Template::build_templates(dir, templates, &template_files)?;
+        Template::build_templates(dir, templates, &template_files, config)?;
 
         Ok(())
     }
