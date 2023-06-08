@@ -7,7 +7,7 @@ use std::collections::HashMap;
 use std::path::{Path, PathBuf};
 use std::process::Command;
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, PartialEq)]
 pub struct Template {
     pub name: String,
     pub desc: Option<String>,
@@ -133,7 +133,7 @@ fn replace_variables(contents: &str, variables: &HashMap<String, String>) -> Res
     let mut contents = contents.to_string();
 
     for (key, value) in variables {
-        contents = contents.replace(&format!("{{{}}}", key), value);
+        contents = contents.replace(&format!("${{{}}}", key), value);
     }
 
     Ok(contents)
@@ -151,4 +151,58 @@ fn run_command(command: &str, dir: &Path) -> Result<()> {
     }
 
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::config::Config;
+
+    #[test]
+    fn test_load_templates() {
+        let config = Config {
+            template_dir: Some(PathBuf::from("tests/templates")),
+            ..Default::default()
+        };
+
+        let expected_template = Template {
+            name: "test".to_owned(),
+            desc: Some("A Test Tempalte".to_owned()),
+            template_dir: Some(PathBuf::from("template_dir")),
+            template_file: Some(PathBuf::from("template_dir/file.txt")),
+            template_vars: Some(vec!["number".to_owned(), "number2".to_owned()]),
+            commands: Some(vec!["mkdir -p test".to_owned()]),
+        };
+
+        let tempaltes = Template::load_templates(&config).unwrap();
+        let template = tempaltes.get("test").unwrap();
+
+        assert_eq!(*template, expected_template);
+    }
+
+    #[test]
+    fn test_load_file() {
+        let mut variables = HashMap::new();
+        variables.insert("number".to_owned(), "1".to_owned());
+        variables.insert("number2".to_owned(), "2".to_owned());
+        let file = load_file(Path::new("tests/templates/template_dir/file.txt"), &variables).unwrap();
+
+        let expected_file = Path::new("tests/templates/template_dir_expected/file.txt");
+        let expected_file = fs::read_to_string(expected_file).unwrap();
+        assert_eq!(file, expected_file);
+
+        fs::write(Path::new("tests/templates/template_dir_expected/file.txt"), file).unwrap();
+    }
+
+    #[test]
+    fn test_load_file_2() {
+        let mut variables = HashMap::new();
+        variables.insert("number".to_owned(), "1".to_owned());
+        variables.insert("number2".to_owned(), "2".to_owned());
+        let file = load_file(Path::new("tests/templates/template_dir/file_2.txt"), &variables).unwrap();
+
+        let expected_file = Path::new("tests/templates/template_dir_expected/file_2.txt");
+        let expected_file = fs::read_to_string(expected_file).unwrap();
+        assert_eq!(file, expected_file);
+    }
 }
